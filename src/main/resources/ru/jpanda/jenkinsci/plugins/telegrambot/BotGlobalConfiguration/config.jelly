@@ -1,0 +1,62 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <style>
+        .t1 {
+        width: 25px;
+        display: inline-block;
+        }
+
+        .t2 {
+        width: 50%;
+        display: inline-block;
+        }
+
+        .t3 {
+        width: 25%;
+        display: inline-block;
+        }
+    </style>
+
+    <f:section title="TelegramBot">
+
+        <f:entry title="Log to console" field="shouldLogToConsole"
+                 description="Check if we should log messages to Jenkins console">
+            <f:checkbox default="true"/>
+        </f:entry>
+
+        <f:optionalBlock name="customProxyName" field="customProxy" title="Use custom proxy">
+            <f:entry field="selectProxyType" title="Select proxy type">
+                <f:select name="selectProxyType">
+                    <f:option selected="selected" value="0">Без прокси</f:option>
+                    <f:option value="1">HTTP</f:option>
+                    <f:option value="2">SOCKS4</f:option>
+                    <f:option value="3">SOCKS5</f:option>
+                </f:select>
+            </f:entry>
+            <f:entry title="Telegram Proxy Host" field="botProxyHost" description="Paste your proxy host">
+                <f:textbox/>
+            </f:entry>
+            <f:entry title="Telegram Proxy Port" field="botProxyPort" description="Paste your proxy port">
+                <f:textbox/>
+            </f:entry>
+            <f:entry title="Telegram Proxy User" field="botProxyUser" description="Paste your proxy user">
+                <f:textbox/>
+            </f:entry>
+            <f:entry title="Telegram Proxy Password" field="botProxyPassword" description="Paste your proxy password">
+                <f:password/>
+            </f:entry>
+        </f:optionalBlock>
+
+        <f:entry title="Telegram Bot name" field="botName" description="Paste your bot name">
+            <f:textbox/>
+        </f:entry>
+
+        <f:entry title="Telegram Bot token" field="botToken" description="Paste your bot token">
+            <f:password/>
+        </f:entry>
+
+        <f:validateButton title="Test Connection" progress="${%Testing...}"
+            method="testConnection" with="botProxyHost,botProxyPort,botName,botToken" />
+    </f:section>
+</j:jelly>

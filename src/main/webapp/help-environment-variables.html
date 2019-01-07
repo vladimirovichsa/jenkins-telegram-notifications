@@ -1,0 +1,121 @@
+<div>
+    <p>Enter the name of the stream that you want to send build
+        notifications or messages to. You can additionally customize the stream name on
+        a per-project basis.</p>
+
+    <p>We recommend something like <code>jenkins</code>
+        or <code>builds</code></p>
+</div>
+<table role="grid" resolved=""
+       style="padding: 0px;">
+    <thead style="position: static; margin-top: 0px; left: 325px; z-index: 3; width: 1133px; top: 92px;">
+    <tr role="row">
+        <th data-column="0"
+            tabindex="0" scope="col" role="columnheader" aria-disabled="false" unselectable="on" aria-sort="none"
+            aria-label="Environment Variable: No sort applied, activate to apply an ascending sort"
+            style="user-select: none; min-width: 8px; max-width: none;">
+            <div><p>Environment Variable</p></div>
+        </th>
+        <th data-column="1"
+            tabindex="0" scope="col" role="columnheader" aria-disabled="false" unselectable="on" aria-sort="none"
+            aria-label="Description: No sort applied, activate to apply an ascending sort"
+            style="user-select: none; min-width: 8px; max-width: none;">
+            <div><p>Description</p></div>
+        </th>
+    </tr>
+    </thead>
+    <thead  style="display: none;">
+    <tr role="row" >
+        <th  data-column="0"
+            tabindex="0" scope="col" role="columnheader" aria-disabled="false" unselectable="on" aria-sort="none"
+            aria-label="Environment Variable: No sort applied, activate to apply an ascending sort"
+            style="user-select: none;">
+            <div ><p>Environment Variable</p></div>
+        </th>
+        <th  data-column="1"
+            tabindex="0" scope="col" role="columnheader" aria-disabled="false" unselectable="on" aria-sort="none"
+            aria-label="Description: No sort applied, activate to apply an ascending sort" style="user-select: none;">
+            <div><p>Description</p></div>
+        </th>
+    </tr>
+    </thead>
+    <tbody aria-live="polite" aria-relevant="all">
+    <tr role="row">
+        <td ><p>BUILD_NUMBER</p></td>
+        <td ><p>The current build number, such as "153"</p></td>
+    </tr>
+    <tr role="row">
+        <td ><p>BUILD_ID</p></td>
+        <td ><p>The current build id, such as "2005-08-22_23-59-59" (YYYY-MM-DD_hh-mm-ss, <a
+                href="https://issues.jenkins-ci.org/browse/JENKINS-26520" class="external-link"
+                rel="nofollow">defunct</a>&nbsp;since&nbsp;version 1.597)</p></td>
+    </tr>
+    <tr role="row">
+        <td ><p>BUILD_URL</p></td>
+        <td ><p>The URL where the results of this build can be found (e.g. <span class="nolink">http://buildserver/jenkins/job/MyJobName/666/</span>)
+        </p></td>
+    </tr>
+    <tr role="row">
+        <td ><p>NODE_NAME</p></td>
+        <td ><p>The name of the node the current build is running on. Equals 'master' for master
+            node.</p></td>
+    </tr>
+    <tr role="row">
+        <td ><p>JOB_NAME</p></td>
+        <td ><p>Name of the project of this build. This is the name you gave your job when you first
+            set it up. It's the third column of the Jenkins Dashboard main page.</p></td>
+    </tr>
+    <tr role="row">
+        <td ><p>BUILD_TAG</p></td>
+        <td ><p>String of <code>jenkins-${JOB_NAME}-${BUILD_NUMBER</code>}. Convenient to put into a
+            resource file, a jar file, etc for easier identification.</p></td>
+    </tr>
+    <tr role="row">
+        <td ><p>JENKINS_URL</p></td>
+        <td ><p>Set to the URL of the Jenkins master that's running the build. This value is used by
+            <a href="/display/JENKINS/Jenkins+CLI">Jenkins CLI</a> for example</p></td>
+    </tr>
+    <tr role="row">
+        <td ><p>EXECUTOR_NUMBER</p></td>
+        <td ><p>The unique number that identifies the current executor (among executors of the same
+            machine) that's carrying out this build. This is the number you see in the "build executor status", except
+            that the number starts from 0, not 1.</p></td>
+    </tr>
+    <tr role="row">
+        <td ><p>JAVA_HOME</p></td>
+        <td ><p>If your job is configured to use a specific JDK, this variable is set to the
+            JAVA_HOME of the specified JDK. When this variable is set, PATH is also updated to have $JAVA_HOME/bin.</p>
+        </td>
+    </tr>
+    <tr role="row">
+        <td ><p>WORKSPACE</p></td>
+        <td ><p>The absolute path of the workspace.</p></td>
+    </tr>
+    <tr role="row">
+        <td ><p>SVN_REVISION</p></td>
+        <td ><p>For Subversion-based projects, this variable contains the revision number of the
+            module. If you have more than one module specified, this won't be set.</p></td>
+    </tr>
+    <tr role="row">
+        <td ><p>CVS_BRANCH</p></td>
+        <td ><p>For CVS-based projects, this variable contains the branch of the module. If CVS is
+            configured to check out the trunk, this environment variable will not be set.</p></td>
+    </tr>
+    <tr role="row">
+        <td ><p>GIT_COMMIT</p></td>
+        <td ><p>For Git-based projects, this variable contains the Git hash of the commit checked
+            out for the build (like&nbsp;ce9a3c1404e8c91be604088670e93434c4253f03) (all the GIT_* variables require git
+            plugin)&nbsp; &nbsp;&nbsp;</p></td>
+    </tr>
+    <tr role="row">
+        <td ><p>GIT_URL</p></td>
+        <td ><p>For Git-based projects, this variable contains the Git url (like&nbsp;git@github.com:user/repo.git
+            or [https://github.com/user/repo.git])</p></td>
+    </tr>
+    <tr role="row">
+        <td ><p>GIT_BRANCH</p></td>
+        <td ><p>For Git-based projects, this variable contains the Git branch that was checked out
+            for the build (normally origin/master)</p></td>
+    </tr>
+    </tbody>
+</table>
