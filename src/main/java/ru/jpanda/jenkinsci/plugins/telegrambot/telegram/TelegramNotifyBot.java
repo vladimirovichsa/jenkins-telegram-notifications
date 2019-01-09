@@ -33,13 +33,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class NotifyBot extends TelegramLongPollingCommandBot {
-    private static final Logger LOG = Logger.getLogger(NotifyBot.class.getName());
+public class TelegramNotifyBot extends TelegramLongPollingCommandBot {
+    private static final Logger LOG = Logger.getLogger(TelegramNotifyBot.class.getName());
 
     private final String token;
 
 
-    public NotifyBot(DefaultBotOptions defaultBotOptions, String token, String name) {
+    public TelegramNotifyBot(DefaultBotOptions defaultBotOptions, String token, String name) {
         super(defaultBotOptions,name);
         this.token = token;
 

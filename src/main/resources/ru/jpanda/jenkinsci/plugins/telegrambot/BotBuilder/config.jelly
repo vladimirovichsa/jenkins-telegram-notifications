@@ -3,7 +3,7 @@
     <f:entry title="ChatID" field="chatId">
         <f:textbox/>
     </f:entry>
-    <f:entry title="Message" field="message" help="/plugin/telegram-notifications/help-environment-variables.html">
+    <f:entry title="Message" field="message" help="/plugin/jenkins-telegram-notifications/help-environment-variables.html">
         <f:textarea/>
     </f:entry>
 </j:jelly>

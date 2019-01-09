@@ -23,17 +23,18 @@ public class BotRunner {
 
     private static final String LOGTAG = "BotRunner";
 
-    private static final Logger LOG = Logger.getLogger(NotifyBot.class.getName());
+    private static final Logger LOG = Logger.getLogger(TelegramNotifyBot.class.getName());
 
-    private  final TelegramBotsApi api = new TelegramBotsApi();
-    private  final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final TelegramBotsApi api = new TelegramBotsApi();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    private NotifyBot bot;
+    private TelegramNotifyBot bot;
+    private BotSession botSession;
 
-    private  String botToken;
-    private  String botName;
+    private String botToken;
+    private String botName;
 
-    boolean isProxy = true;
+    boolean isProxy = false;
 
     static {
         ApiContextInitializer.init();
@@ -54,17 +55,19 @@ public class BotRunner {
 
     private final Runnable task = (() -> {
         if (bot == null
+                || !"".equals(botToken)
+                || !"".equals(botName)
                 || !bot.getBotToken().equals(botToken)
                 || !bot.getBotUsername().equals(botName)
-        || !bot.getOptions().getProxyHost().equals(getConfig().getBotProxyHost())) {
-            bot = new NotifyBot(initializeProxy(), botToken, botName);
+                || !bot.getOptions().getProxyHost().equals(getConfig().getBotProxyHost())) {
+            bot = new TelegramNotifyBot(initializeProxy(), botToken, botName);
             LOG.log(Level.INFO, "Bot was created");
         } else {
             LOG.log(Level.INFO, "There is no reason for bot recreating");
             return;
         }
         try {
-            api.registerBot(bot);
+            botSession = api.registerBot(bot);
             LOG.log(Level.INFO, "New bot session was registered");
         } catch (TelegramApiRequestException e) {
             LOG.log(Level.SEVERE, "Telegram API error", e);
@@ -84,16 +87,18 @@ public class BotRunner {
                 switch (getConfig().getBotProxyType()) {
                     case 0:
                         botOptions.setProxyType(DefaultBotOptions.ProxyType.NO_PROXY);
-                        isProxy = false;
                         break;
                     case 1:
                         botOptions.setProxyType(DefaultBotOptions.ProxyType.HTTP);
+                        isProxy = true;
                         break;
                     case 2:
                         botOptions.setProxyType(DefaultBotOptions.ProxyType.SOCKS4);
+                        isProxy = true;
                         break;
                     case 3:
                         botOptions.setProxyType(DefaultBotOptions.ProxyType.SOCKS5);
+                        isProxy = true;
                         break;
                 }
                 if (isProxy && null != (botProxyHost = getConfig().getBotProxyHost()) && !"".equalsIgnoreCase(botProxyHost)
@@ -137,14 +142,14 @@ public class BotRunner {
         botName = name;
         botToken = token;
         String result = null;
-        NotifyBot testBot = new NotifyBot(initializeProxy(), botToken, botName);
+        TelegramNotifyBot testBot = new TelegramNotifyBot(initializeProxy(), botToken, botName);
         TelegramBotsApi apiTest = new TelegramBotsApi();
         LOG.log(Level.INFO, "Test connection - Test connection");
         BotSession botSession = null;
         try {
             botSession = apiTest.registerBot(testBot);
         } catch (TelegramApiRequestException e) {
-            result =  e.getMessage();
+            result = e.getMessage();
             e.printStackTrace();
         }
         LOG.log(Level.INFO, "Test connection - New bot session was registered");
@@ -154,7 +159,7 @@ public class BotRunner {
         return result;
     }
 
-    public NotifyBot getBot() {
+    public TelegramNotifyBot getBot() {
         return bot;
     }
 }
