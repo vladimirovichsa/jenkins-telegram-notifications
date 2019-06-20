@@ -37,11 +37,13 @@ public class TelegramNotifyBot extends TelegramLongPollingCommandBot {
     private static final Logger LOG = Logger.getLogger(TelegramNotifyBot.class.getName());
 
     private final String token;
+    private final String baseUrl;
 
 
-    public TelegramNotifyBot(DefaultBotOptions defaultBotOptions, String token, String name) {
+    public TelegramNotifyBot(DefaultBotOptions defaultBotOptions, String token, String name, String baseUrl) {
         super(defaultBotOptions,name);
         this.token = token;
+        this.baseUrl = baseUrl;
 
         Arrays.asList(
                 new StartCommand(),
@@ -185,6 +187,11 @@ public class TelegramNotifyBot extends TelegramLongPollingCommandBot {
         }
 
         sendMessage(chat.getId(), nonCommandMessage);
+    }
+
+    @Override
+    public String getBaseUrl() {
+        return baseUrl != null ? baseUrl : super.getBaseUrl();
     }
 
     @Override

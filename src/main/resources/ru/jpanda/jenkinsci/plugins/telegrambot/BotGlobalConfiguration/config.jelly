@@ -48,6 +48,10 @@
             </f:entry>
         </f:optionalBlock>
 
+        <f:entry title="Telegram Base URL" field="baseUrl" description="Paste your base url for bot api">
+            <f:textbox/>
+        </f:entry>
+
         <f:entry title="Telegram Bot name" field="botName" description="Paste your bot name">
             <f:textbox/>
         </f:entry>
@@ -57,6 +61,6 @@
         </f:entry>
 
         <f:validateButton title="Test Connection" progress="${%Testing...}"
-            method="testConnection" with="botProxyHost,botProxyPort,botName,botToken" />
+            method="testConnection" with="botProxyHost,botProxyPort,botName,botToken,baseUrl" />
     </f:section>
 </j:jelly>

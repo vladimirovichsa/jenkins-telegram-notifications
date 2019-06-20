@@ -33,8 +33,9 @@ public class BotRunner {
 
     private String botToken;
     private String botName;
+    private String baseUrl;
 
-    boolean isProxy = false;
+    private boolean isProxy = false;
 
     static {
         ApiContextInitializer.init();
@@ -60,7 +61,7 @@ public class BotRunner {
                 || !bot.getBotToken().equals(botToken)
                 || !bot.getBotUsername().equals(botName)
                 || !bot.getOptions().getProxyHost().equals(getConfig().getBotProxyHost())) {
-            bot = new TelegramNotifyBot(initializeProxy(), botToken, botName);
+            bot = new TelegramNotifyBot(initializeProxy(), botToken, botName,getConfig().getBaseUrl());
             LOG.log(Level.INFO, "Bot was created");
         } else {
             LOG.log(Level.INFO, "There is no reason for bot recreating");
@@ -138,16 +139,16 @@ public class BotRunner {
         return botOptions;
     }
 
-    public String testConnection(String name, String token) {
-        botName = name;
-        botToken = token;
+    public String testConnection(String name, String token, String baseUrl) {
+        this.botName = name;
+        this.botToken = token;
+        this.baseUrl = token;
         String result = null;
-        TelegramNotifyBot testBot = new TelegramNotifyBot(initializeProxy(), botToken, botName);
-        TelegramBotsApi apiTest = new TelegramBotsApi();
+        TelegramNotifyBot testBot = new TelegramNotifyBot(initializeProxy(), botToken, botName, this.baseUrl);
         LOG.log(Level.INFO, "Test connection - Test connection");
         BotSession botSession = null;
         try {
-            botSession = apiTest.registerBot(testBot);
+            botSession = new TelegramBotsApi().registerBot(testBot);
         } catch (TelegramApiRequestException e) {
             result = e.getMessage();
             e.printStackTrace();

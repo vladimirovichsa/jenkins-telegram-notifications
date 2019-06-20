@@ -47,6 +47,7 @@ public class BotGlobalConfiguration extends GlobalConfiguration {
     private String botToken;
     private String botName;
     private int botProxyType;
+    private String baseUrl;
 
     /**
      * Called when Jenkins is starting and it's config is loading
@@ -87,13 +88,14 @@ public class BotGlobalConfiguration extends GlobalConfiguration {
                                  @QueryParameter("botProxyHost") final String botProxyHost,
                                  @QueryParameter("botProxyPort") final String botProxyPort,
                                  @QueryParameter("botName") final String botName,
-                                 @QueryParameter("botToken") final String botToken) throws IOException, ServletException {
+                                 @QueryParameter("botToken") final String botToken,
+                                 @QueryParameter("baseUrl") final String baseUrl) throws IOException, ServletException {
         new FormFieldValidator(req, rsp, true) {
             protected void check() throws IOException, ServletException {
                 setBotProxyHost(botProxyHost);
                 setBotProxyPort(Integer.parseInt(botProxyPort));
                 String res = null;
-                res = BotRunner.getInstance().testConnection(botName, botToken);
+                res = BotRunner.getInstance().testConnection(botName, botToken, baseUrl);
                 if (res == null) {
                     ok("Success");
                 } else {
@@ -135,6 +137,7 @@ public class BotGlobalConfiguration extends GlobalConfiguration {
         setLogToConsole(formData.getBoolean("shouldLogToConsole"));
         setBotToken(formData.getString("botToken"));
         setBotName(formData.getString("botName"));
+        setBaseUrl(formData.getString("baseUrl"));
         if (null != formData.get("customProxyName")) {
             setCustomProxy(true);
             setBotProxyHost(formData.getJSONObject("customProxyName").getString("botProxyHost"));
@@ -150,6 +153,10 @@ public class BotGlobalConfiguration extends GlobalConfiguration {
 
         save();
         return super.configure(req, formData);
+    }
+
+    private void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
     @Override
@@ -274,4 +281,7 @@ public class BotGlobalConfiguration extends GlobalConfiguration {
         return this.botProxyPassword;
     }
 
+    public String getBaseUrl() {
+        return this.baseUrl;
+    }
 }
