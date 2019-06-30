@@ -26,8 +26,9 @@
     <properties>
 
         <!--Versions-->
-
         <java.level>8</java.level>
+        <java.version>1.8</java.version>
+        <kotlin.version>1.3.31</kotlin.version>
         <jenkins.version>2.7</jenkins.version>
 
         <!--Maven plugins-->
@@ -42,7 +43,6 @@
         <jenkins.plugins.token-macro.version>2.5</jenkins.plugins.token-macro.version>
 
         <!--Properties-->
-
         <findbugs.failOnError>false</findbugs.failOnError>
         <maven-hpi-plugin.disabledTestInjection>true</maven-hpi-plugin.disabledTestInjection>
 
@@ -81,6 +81,20 @@
     </pluginRepositories>
 
     <dependencies>
+
+        <!--Kotlin-->
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <!--Telegram Bot related dependencies-->
         <dependency>
@@ -143,6 +157,30 @@
                     <compilerArgs>
                         <arg>-Xlint:all</arg>
                     </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmTarget>${java.version}</jvmTarget>
                 </configuration>
             </plugin>
             <plugin>

@@ -1,4 +1,4 @@
-package ru.jpanda.jenkinsci.plugins.telegrambot.dict;
+package ru.jpanda.jenkinsci.plugins.telegrambot.configuration;
 
 public enum PropertyFiles {
 

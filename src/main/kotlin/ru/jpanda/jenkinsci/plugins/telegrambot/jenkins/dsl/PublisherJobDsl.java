@@ -1,6 +1,5 @@
-package ru.jpanda.jenkinsci.plugins.telegrambot.dsl;
+package ru.jpanda.jenkinsci.plugins.telegrambot.jenkins.dsl;
 
-import ru.jpanda.jenkinsci.plugins.telegrambot.BotPublisher;
 import hudson.Extension;
 import javaposse.jobdsl.plugin.ContextExtensionPoint;
 import javaposse.jobdsl.plugin.DslExtensionMethod;

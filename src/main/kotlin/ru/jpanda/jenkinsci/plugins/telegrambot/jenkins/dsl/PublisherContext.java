@@ -1,4 +1,4 @@
-package ru.jpanda.jenkinsci.plugins.telegrambot.dsl;
+package ru.jpanda.jenkinsci.plugins.telegrambot.jenkins.dsl;
 
 import javaposse.jobdsl.dsl.Context;
 
