@@ -39,6 +39,11 @@ public class BotRunner {
 
     static {
         System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
+//        System.setProperty("http.proxyUser", );
+//        System.setProperty("http.proxyPassword", );
+//        System.setProperty("http.proxyHost", botProxyHost);
+//        System.setProperty("http.proxyPort", String.valueOf(botProxyPort));
+        System.setProperty("http.proxySet", "false");
         ApiContextInitializer.init();
     }
 

@@ -88,36 +88,30 @@ public class BotPublisher extends Notifier implements SimpleBuildStep {
 
         if (neededToSend) {
             BotRunner.getInstance().getBot()
-                    .sendMessage(getChatId(), getResultMessage(result,getMessage()), run, filePath, taskListener);
+                    .sendMessage(getChatId(),getMessage(), run, filePath, taskListener);
         }
-        String randomAnimation = null;
-        if (success) {
-            randomAnimation = getRandomAnimation(Config.getCONFIG().getBotStringsGifSuccess());
-        }
-        if (unstable) {
-            randomAnimation = getRandomAnimation(Config.getCONFIG().getBotStringsGifUnstable());
-        }
-        if (failed) {
-            randomAnimation = getRandomAnimation(Config.getCONFIG().getBotStringsGifFailure());
-        }
-        if (aborted) {
-            randomAnimation = getRandomAnimation(Config.getCONFIG().getBotStringsGifAborted());
-        }
+        String randomAnimation = getAnimationKey(result);
 
-        if (randomAnimation != null && !randomAnimation.isEmpty()) {
+        if (randomAnimation != null && !randomAnimation.isEmpty() && neededToSend) {
             BotRunner.getInstance().getBot()
                     .sendMessage(getChatId(), new SendAnimation().setAnimation(randomAnimation));
         }
     }
 
-    private String getResultMessage(Result resultJOB, String message) {
-        String result = "";
-        if (resultJOB == Result.SUCCESS) result = "SUCCESS";
-        if (resultJOB == Result.FAILURE) result = "FAILURE";
-        if (resultJOB == Result.ABORTED) result = "ABORTED";
-        if (resultJOB == Result.UNSTABLE) result = "UNSTABLE";
+    private String getAnimationKey(Result result) {
+        if (result == Result.SUCCESS)
+            return getRandomAnimation(Config.getCONFIG().getBotStringsGifSuccess());
 
-        return new StringBuilder("#").append(result).append(":: ").append(message).toString();
+        if (result == Result.UNSTABLE)
+            return getRandomAnimation(Config.getCONFIG().getBotStringsGifUnstable());
+
+        if (result == Result.FAILURE)
+            return getRandomAnimation(Config.getCONFIG().getBotStringsGifFailure());
+
+        if (result == Result.ABORTED)
+            return getRandomAnimation(Config.getCONFIG().getBotStringsGifAborted());
+
+        return null;
     }
 
     private String getRandomAnimation(Map<String, String> gifMap) {
