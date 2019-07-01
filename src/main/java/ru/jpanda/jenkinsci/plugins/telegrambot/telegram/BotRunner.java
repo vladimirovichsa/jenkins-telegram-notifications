@@ -38,6 +38,7 @@ public class BotRunner {
     private boolean isProxy = false;
 
     static {
+        System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
         ApiContextInitializer.init();
     }
 
@@ -61,7 +62,9 @@ public class BotRunner {
                 || !bot.getBotToken().equals(botToken)
                 || !bot.getBotUsername().equals(botName)
                 || !bot.getOptions().getProxyHost().equals(getConfig().getBotProxyHost())) {
-            bot = new TelegramNotifyBot(initializeProxy(), botToken, botName,getConfig().getBaseUrl());
+            DefaultBotOptions defaultBotOptions = initializeProxy();
+            LOG.log(Level.INFO, String.format("Connecting to %1s:%2s, type %3s ",defaultBotOptions.getProxyHost(),defaultBotOptions.getProxyPort(),defaultBotOptions.getProxyType()));
+            bot = new TelegramNotifyBot(defaultBotOptions, botToken, botName,getConfig().getBaseUrl());
             LOG.log(Level.INFO, "Bot was created");
         } else {
             LOG.log(Level.INFO, "There is no reason for bot recreating");

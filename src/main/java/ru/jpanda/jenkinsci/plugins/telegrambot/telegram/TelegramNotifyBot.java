@@ -87,48 +87,6 @@ public class TelegramNotifyBot extends TelegramLongPollingCommandBot {
         }
     }
 
-    @Override
-    public Message execute(SendAnimation sendAnimation) throws TelegramApiException {
-        if (sendAnimation == null) {
-            throw new TelegramApiException("Parameter " + sendAnimation + " can not be null");
-        }
-        sendAnimation.validate();
-        try {
-            String url = getBaseUrl() + SendAnimation.PATH;
-            HttpPost httppost = new HttpPost(url);
-            httppost.setConfig(getOptions().getRequestConfig());
-            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-            builder.setLaxMode();
-            builder.setCharset(StandardCharsets.UTF_8);
-            builder.addTextBody(SendAnimation.CHATID_FIELD, sendAnimation.getChatId(), ContentType.create("text/plain", StandardCharsets.UTF_8));
-            builder.addTextBody(SendAnimation.ANIMATION_FIELD, sendAnimation.getAnimation().getAttachName(), ContentType.create("text/plain", StandardCharsets.UTF_8));
-
-            if (sendAnimation.getDisableNotification() != null) {
-                builder.addTextBody(SendAnimation.DISABLENOTIFICATION_FIELD, sendAnimation.getDisableNotification().toString(), ContentType.create("text/plain", StandardCharsets.UTF_8));
-            }
-
-            if (sendAnimation.getCaption() != null) {
-                builder.addTextBody(SendAnimation.CAPTION_FIELD, sendAnimation.getCaption(), ContentType.create("text/plain", StandardCharsets.UTF_8));
-                if (sendAnimation.getParseMode() != null) {
-                    builder.addTextBody(SendAnimation.PARSEMODE_FIELD, sendAnimation.getParseMode(), ContentType.create("text/plain", StandardCharsets.UTF_8));
-                }
-            }
-            HttpEntity multipart = builder.build();
-            httppost.setEntity(multipart);
-            return sendAnimation.deserializeResponse(sendHttpPostRequest(httppost));
-        } catch (IOException e) {
-            throw new TelegramApiException("Unable to edit message media", e);
-        }
-    }
-
-    private String sendHttpPostRequest(HttpPost httppost) throws IOException {
-        try (CloseableHttpResponse response = TelegramHttpClientBuilder.build(getOptions()).execute(httppost, getOptions().getHttpContext())) {
-            HttpEntity ht = response.getEntity();
-            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
-            return EntityUtils.toString(buf, StandardCharsets.UTF_8);
-        }
-    }
-
     public void sendMessage(Long chatId,
                             String message, Run<?, ?> run, FilePath filePath, TaskListener taskListener)
             throws IOException, InterruptedException {
@@ -191,7 +149,7 @@ public class TelegramNotifyBot extends TelegramLongPollingCommandBot {
 
     @Override
     public String getBaseUrl() {
-        return baseUrl != null ? baseUrl : super.getBaseUrl();
+        return !baseUrl.isEmpty() ? baseUrl : super.getBaseUrl();
     }
 
     @Override
