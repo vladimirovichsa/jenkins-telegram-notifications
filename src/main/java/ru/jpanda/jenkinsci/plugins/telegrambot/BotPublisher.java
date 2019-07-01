@@ -88,7 +88,7 @@ public class BotPublisher extends Notifier implements SimpleBuildStep {
 
         if (neededToSend) {
             BotRunner.getInstance().getBot()
-                    .sendMessage(getChatId(), getMessage(), run, filePath, taskListener);
+                    .sendMessage(getChatId(), getResultMessage(result,getMessage()), run, filePath, taskListener);
         }
         String randomAnimation = null;
         if (success) {
@@ -108,6 +108,16 @@ public class BotPublisher extends Notifier implements SimpleBuildStep {
             BotRunner.getInstance().getBot()
                     .sendMessage(getChatId(), new SendAnimation().setAnimation(randomAnimation));
         }
+    }
+
+    private String getResultMessage(Result resultJOB, String message) {
+        String result = "";
+        if (resultJOB == Result.SUCCESS) result = "SUCCESS";
+        if (resultJOB == Result.FAILURE) result = "FAILURE";
+        if (resultJOB == Result.ABORTED) result = "ABORTED";
+        if (resultJOB == Result.UNSTABLE) result = "UNSTABLE";
+
+        return new StringBuilder("#").append(result).append(":: ").append(message).toString();
     }
 
     private String getRandomAnimation(Map<String, String> gifMap) {

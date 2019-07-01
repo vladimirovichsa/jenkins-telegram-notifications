@@ -3,21 +3,10 @@ package ru.jpanda.jenkinsci.plugins.telegrambot.telegram;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import ru.jpanda.jenkinsci.plugins.telegrambot.telegram.commands.AddGifComand;
-import ru.jpanda.jenkinsci.plugins.telegrambot.telegram.commands.HelpCommand;
-import ru.jpanda.jenkinsci.plugins.telegrambot.telegram.commands.StartCommand;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.util.EntityUtils;
 import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
 import org.jenkinsci.plugins.tokenmacro.TokenMacro;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
-import org.telegram.telegrambots.facilities.TelegramHttpClientBuilder;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
@@ -25,9 +14,11 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.logging.BotLogger;
+import ru.jpanda.jenkinsci.plugins.telegrambot.telegram.commands.AddGifComand;
+import ru.jpanda.jenkinsci.plugins.telegrambot.telegram.commands.HelpCommand;
+import ru.jpanda.jenkinsci.plugins.telegrambot.telegram.commands.StartCommand;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,7 +32,7 @@ public class TelegramNotifyBot extends TelegramLongPollingCommandBot {
 
 
     public TelegramNotifyBot(DefaultBotOptions defaultBotOptions, String token, String name, String baseUrl) {
-        super(defaultBotOptions,name);
+        super(defaultBotOptions, name);
         this.token = token;
         this.baseUrl = baseUrl;
 
@@ -60,7 +51,6 @@ public class TelegramNotifyBot extends TelegramLongPollingCommandBot {
 //            }
 //        }
 //    }
-
 
 
     public void sendMessage(Long chatId, String message) {
@@ -123,7 +113,7 @@ public class TelegramNotifyBot extends TelegramLongPollingCommandBot {
         final Message message = update.getMessage();
         final Chat chat = message.getChat();
 
-        if(update.getMessage().hasAnimation()){
+        if (update.getMessage().hasAnimation()) {
             BotLogger.info("LISTENER_CHAT_ANIMATION", update.getMessage().getAnimation().toString());
         }
 
@@ -135,10 +125,11 @@ public class TelegramNotifyBot extends TelegramLongPollingCommandBot {
         final String text = message.getText();
 
         try {
-            if(null == text || "".equals(text))return;
+            if (null == text || "".equals(text)) return;
             final String[] tmp = text.split(" ");
             if (text.length() < 1 || text.charAt(0) != '@' || null == tmp[0]) return;
-            if (tmp.length < 2 || !BotRunner.getInstance().getConfig().getBotName().equals(tmp[0].substring(1, tmp[0].length()))) return;
+            if (tmp.length < 2 || !BotRunner.getInstance().getConfig().getBotName().equals(tmp[0].substring(1, tmp[0].length())))
+                return;
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "Something bad happened while message processing", e);
             return;
