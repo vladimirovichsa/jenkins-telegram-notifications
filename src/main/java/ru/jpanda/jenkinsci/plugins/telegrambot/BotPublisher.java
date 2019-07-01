@@ -12,10 +12,10 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import jenkins.tasks.SimpleBuildStep;
-import ru.jpanda.jenkinsci.plugins.telegrambot.telegram.BotRunner;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.logging.BotLogger;
+import ru.jpanda.jenkinsci.plugins.telegrambot.telegram.BotRunner;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -90,31 +90,34 @@ public class BotPublisher extends Notifier implements SimpleBuildStep {
             BotRunner.getInstance().getBot()
                     .sendMessage(getChatId(), getMessage(), run, filePath, taskListener);
         }
-        final SendAnimation animationMessage = new SendAnimation();
-
+        String randomAnimation = null;
         if (success) {
-            animationMessage.setAnimation(getRandomAnimation(Config.getCONFIG().getBotStringsGifSuccess()));
+            randomAnimation = getRandomAnimation(Config.getCONFIG().getBotStringsGifSuccess());
         }
-//        if (unstable) {
-//            animationMessage.setAnimation(getRandomAnimation(Config.getCONFIG().getBotStringsGifUnstable()));
-//        }
+        if (unstable) {
+            randomAnimation = getRandomAnimation(Config.getCONFIG().getBotStringsGifUnstable());
+        }
         if (failed) {
-            animationMessage.setAnimation(getRandomAnimation(Config.getCONFIG().getBotStringsGifFailure()));
+            randomAnimation = getRandomAnimation(Config.getCONFIG().getBotStringsGifFailure());
         }
-//        if (aborted) {
-//            animationMessage.setAnimation(getRandomAnimation(Config.getCONFIG().getBotStringsGifAborted()));
-//        }
+        if (aborted) {
+            randomAnimation = getRandomAnimation(Config.getCONFIG().getBotStringsGifAborted());
+        }
 
-        if(success || failed){
+        if (randomAnimation != null && !randomAnimation.isEmpty()) {
             BotRunner.getInstance().getBot()
-                    .sendMessage(getChatId(), animationMessage);
+                    .sendMessage(getChatId(), new SendAnimation().setAnimation(randomAnimation));
         }
     }
 
-    private String getRandomAnimation(Map<String, String> gifMap){
-        Object[] crunchifyKeys = gifMap.keySet().toArray();
-        String fileId = gifMap.get(crunchifyKeys[new Random().nextInt(crunchifyKeys.length)]);
-        BotLogger.info("ANIMATION",fileId);
+    private String getRandomAnimation(Map<String, String> gifMap) {
+        String fileId = null;
+        if (gifMap != null && gifMap.size() > 0) {
+            Object[] crunchifyKeys = gifMap.keySet().toArray();
+            fileId = gifMap.get(crunchifyKeys[new Random().nextInt(crunchifyKeys.length)]);
+            BotLogger.info("ANIMATION", fileId);
+        }
+
         return fileId;
     }
 

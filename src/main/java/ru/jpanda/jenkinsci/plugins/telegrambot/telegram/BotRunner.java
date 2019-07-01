@@ -23,7 +23,7 @@ public class BotRunner {
 
     private static final String LOGTAG = "BotRunner";
 
-    private static final Logger LOG = Logger.getLogger(TelegramNotifyBot.class.getName());
+    private static final Logger LOG = Logger.getLogger(BotRunner.class.getName());
 
     private final TelegramBotsApi api = new TelegramBotsApi();
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -57,8 +57,8 @@ public class BotRunner {
 
     private final Runnable task = (() -> {
         if (bot == null
-                || !"".equals(botToken)
-                || !"".equals(botName)
+                || !botToken.isEmpty()
+                || !botName.isEmpty()
                 || !bot.getBotToken().equals(botToken)
                 || !bot.getBotUsername().equals(botName)
                 || !bot.getOptions().getProxyHost().equals(getConfig().getBotProxyHost())) {
