@@ -145,8 +145,8 @@ public class BotRunner {
     public String testConnection(String name, String token, String baseUrl) {
         this.botName = name;
         this.botToken = token;
-        this.baseUrl = token;
-        String result = null;
+        this.baseUrl = baseUrl;
+        String result = "SUCCESS";
         TelegramNotifyBot testBot = new TelegramNotifyBot(initializeProxy(), botToken, botName, this.baseUrl);
         LOG.log(Level.INFO, "Test connection - Test connection");
         BotSession botSession = null;
