@@ -61,6 +61,6 @@
         </f:entry>
 
         <f:validateButton title="Test Connection" progress="${%Testing...}"
-            method="testConnection" with="botProxyHost,botProxyPort,botName,botToken,baseUrl" />
+            method="testConnection" with="customProxy,botProxyHost,botProxyPort,selectProxyType,botProxyUser,botProxyPassword,botName,botToken,baseUrl" />
     </f:section>
 </j:jelly>

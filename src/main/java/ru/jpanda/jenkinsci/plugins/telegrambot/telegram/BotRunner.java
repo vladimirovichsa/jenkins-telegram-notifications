@@ -1,14 +1,14 @@
 package ru.jpanda.jenkinsci.plugins.telegrambot.telegram;
 
 import hudson.ProxyConfiguration;
-import ru.jpanda.jenkinsci.plugins.telegrambot.BotGlobalConfiguration;
-import ru.jpanda.jenkinsci.plugins.telegrambot.Config;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.ApiContext;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.meta.generics.BotSession;
+import ru.jpanda.jenkinsci.plugins.telegrambot.BotGlobalConfiguration;
+import ru.jpanda.jenkinsci.plugins.telegrambot.Config;
 
 import java.io.IOException;
 import java.net.Authenticator;
@@ -33,17 +33,8 @@ public class BotRunner {
 
     private String botToken;
     private String botName;
-    private String baseUrl;
-
-    private boolean isProxy = false;
 
     static {
-        System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
-//        System.setProperty("http.proxyUser", );
-//        System.setProperty("http.proxyPassword", );
-//        System.setProperty("http.proxyHost", botProxyHost);
-//        System.setProperty("http.proxyPort", String.valueOf(botProxyPort));
-        System.setProperty("http.proxySet", "false");
         ApiContextInitializer.init();
     }
 
@@ -67,9 +58,11 @@ public class BotRunner {
                 || !bot.getBotToken().equals(botToken)
                 || !bot.getBotUsername().equals(botName)
                 || !bot.getOptions().getProxyHost().equals(getConfig().getBotProxyHost())) {
-            DefaultBotOptions defaultBotOptions = initializeProxy();
-            LOG.log(Level.INFO, String.format("Connecting to %1s:%2s, type %3s ",defaultBotOptions.getProxyHost(),defaultBotOptions.getProxyPort(),defaultBotOptions.getProxyType()));
-            bot = new TelegramNotifyBot(defaultBotOptions, botToken, botName,getConfig().getBaseUrl());
+            DefaultBotOptions defaultBotOptions = initializeProxy(getConfig().getCustomProxy());
+            if (!getConfig().getBaseUrl().isEmpty())
+                defaultBotOptions.setBaseUrl(getConfig().getBaseUrl());
+            LOG.log(Level.INFO, String.format("Connecting to %1s:%2s, type %3s ", defaultBotOptions.getProxyHost(), defaultBotOptions.getProxyPort(), defaultBotOptions.getProxyType()));
+            bot = new TelegramNotifyBot(defaultBotOptions, botToken, botName);
             LOG.log(Level.INFO, "Bot was created");
         } else {
             LOG.log(Level.INFO, "There is no reason for bot recreating");
@@ -87,32 +80,14 @@ public class BotRunner {
         return Config.getCONFIG();
     }
 
-    private DefaultBotOptions initializeProxy() {
+    private DefaultBotOptions initializeProxy(boolean customProxy) {
         DefaultBotOptions botOptions = ApiContext.getInstance(DefaultBotOptions.class);
         try {
-            String botProxyHost = null;
-            int botProxyPort = 0;
-            if (getConfig().getCustomProxy()) {
-                switch (getConfig().getBotProxyType()) {
-                    case 0:
-                        botOptions.setProxyType(DefaultBotOptions.ProxyType.NO_PROXY);
-                        break;
-                    case 1:
-                        botOptions.setProxyType(DefaultBotOptions.ProxyType.HTTP);
-                        isProxy = true;
-                        break;
-                    case 2:
-                        botOptions.setProxyType(DefaultBotOptions.ProxyType.SOCKS4);
-                        isProxy = true;
-                        break;
-                    case 3:
-                        botOptions.setProxyType(DefaultBotOptions.ProxyType.SOCKS5);
-                        isProxy = true;
-                        break;
-                }
-                if (isProxy && null != (botProxyHost = getConfig().getBotProxyHost()) && !"".equalsIgnoreCase(botProxyHost)
-                        && (botProxyPort = getConfig().getBotProxyPort()) != 0) {
-                    LOG.log(Level.INFO, "PROXY is " + (isProxy ? "ENABLED" : "DISABLED"));
+            String botProxyHost = getConfig().getBotProxyHost();
+            int botProxyPort = getConfig().getBotProxyPort();
+            boolean isProxy = isProxy(botOptions);
+            if (customProxy) {
+                if (isProxy && !botProxyHost.isEmpty() && botProxyPort != 0) {
                     if (null != getConfig().getBotProxyUser() && !"".equalsIgnoreCase(getConfig().getBotProxyUser())
                             && null != getConfig().getBotProxyPassword() && !"".equalsIgnoreCase(getConfig().getBotProxyPassword())) {
                         LOG.log(Level.INFO, "Authenticator enabled");
@@ -125,34 +100,42 @@ public class BotRunner {
                     }
                     botOptions.setProxyHost(botProxyHost);
                     botOptions.setProxyPort(botProxyPort);
-                    LOG.log(Level.INFO, "Custom proxy successfully initialized");
+                    LOG.log(Level.INFO, "Settings proxy Telegram bot successfully initialized");
                 } else {
-                    LOG.log(Level.FINE, "Custom proxy empty");
+                    LOG.log(Level.FINE, "Settings proxy Telegram bot DISABLED");
                 }
             } else {
                 ProxyConfiguration proxyConfig = ProxyConfiguration.load();
                 if (proxyConfig != null) {
+                    isProxy = true;
                     LOG.log(Level.INFO, String.format("Proxy settings: %s:%d", proxyConfig.name, proxyConfig.port));
                     botOptions.setProxyHost(proxyConfig.name);
                     botOptions.setProxyPort(proxyConfig.port);
                     botOptions.setProxyType(DefaultBotOptions.ProxyType.HTTP);
                 } else {
-                    LOG.log(Level.INFO, "No proxy settings in Jenkins");
+                    LOG.log(Level.INFO, "System proxy in Jenkins DISABLED");
                 }
             }
-            LOG.log(Level.INFO, "Proxy successfully initialized");
+            LOG.log(Level.INFO, "PROXY is " + (isProxy ? "ENABLED" : "DISABLED"));
+            if (isProxy)
+                LOG.log(Level.INFO, "Proxy successfully initialized");
+
         } catch (IOException e) {
             LOG.log(Level.SEVERE, "NotifyBot: Failed to set proxy", e);
         }
         return botOptions;
     }
 
-    public String testConnection(String name, String token, String baseUrl) {
+    public String testConnection(String name, String token) {
         this.botName = name;
         this.botToken = token;
-        this.baseUrl = baseUrl;
         String result = "SUCCESS";
-        TelegramNotifyBot testBot = new TelegramNotifyBot(initializeProxy(), botToken, botName, this.baseUrl);
+
+        DefaultBotOptions defaultBotOptions = initializeProxy(getConfig().getCustomProxy());
+        if (!getConfig().getBaseUrl().isEmpty())
+            defaultBotOptions.setBaseUrl(getConfig().getBaseUrl());
+
+        TelegramNotifyBot testBot = new TelegramNotifyBot(defaultBotOptions, botToken, botName);
         LOG.log(Level.INFO, "Test connection - Test connection");
         BotSession botSession = null;
         try {
@@ -166,6 +149,28 @@ public class BotRunner {
             botSession.stop();
         }
         return result;
+    }
+
+    private boolean isProxy(DefaultBotOptions defaultBotOptions){
+        boolean isProxy = false;
+        switch (getConfig().getBotProxyType()) {
+            case 0:
+                defaultBotOptions.setProxyType(DefaultBotOptions.ProxyType.NO_PROXY);
+                break;
+            case 1:
+                defaultBotOptions.setProxyType(DefaultBotOptions.ProxyType.HTTP);
+                isProxy = true;
+                break;
+            case 2:
+                defaultBotOptions.setProxyType(DefaultBotOptions.ProxyType.SOCKS4);
+                isProxy = true;
+                break;
+            case 3:
+                defaultBotOptions.setProxyType(DefaultBotOptions.ProxyType.SOCKS5);
+                isProxy = true;
+                break;
+        }
+        return isProxy;
     }
 
     public TelegramNotifyBot getBot() {

@@ -85,18 +85,28 @@ public class BotGlobalConfiguration extends GlobalConfiguration {
      * Test connection bot
      * */
     public void doTestConnection(StaplerRequest req, StaplerResponse rsp,
+                                 @QueryParameter("customProxyName") final String customProxy,
                                  @QueryParameter("botProxyHost") final String botProxyHost,
                                  @QueryParameter("botProxyPort") final String botProxyPort,
+                                 @QueryParameter("selectProxyType") final String selectProxyType,
+                                 @QueryParameter("botProxyUser") final String botProxyUser,
+                                 @QueryParameter("botProxyPassword") final String botProxyPassword,
                                  @QueryParameter("botName") final String botName,
                                  @QueryParameter("botToken") final String botToken,
                                  @QueryParameter("baseUrl") final String baseUrl) throws IOException, ServletException {
         new FormFieldValidator(req, rsp, true) {
             protected void check() throws IOException, ServletException {
+                setBotName(botName);
+                setBotToken(botToken);
+                setCustomProxy(!customProxy.isEmpty());
                 setBotProxyHost(botProxyHost);
                 setBotProxyPort(Integer.parseInt(botProxyPort));
-                String res = null;
-                res = BotRunner.getInstance().testConnection(botName, botToken, baseUrl);
-                if (res == null) {
+                setBotProxyUser(botProxyUser);
+                setBotProxyPassword(botProxyPassword);
+                setBotProxyType(Integer.parseInt(selectProxyType));
+                setBaseUrl(baseUrl);
+                String res = BotRunner.getInstance().testConnection(getBotName(), getBotToken());
+                if ("SUCCESS".equals(res)) {
                     ok("Success");
                 } else {
                     error("Connect error : " + res);
