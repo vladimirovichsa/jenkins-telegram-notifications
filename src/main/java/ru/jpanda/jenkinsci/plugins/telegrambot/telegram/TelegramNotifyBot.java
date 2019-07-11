@@ -104,36 +104,36 @@ public class TelegramNotifyBot extends TelegramLongPollingCommandBot {
             LOG.log(Level.WARNING, "Update is null");
             return;
         }
-
-        final String nonCommandMessage = BotRunner.getInstance().getConfig().getBotStrings()
-                .get("message.noncommand");
-
-        final Message message = update.getMessage();
-        final Chat chat = message.getChat();
+//
+//        final String nonCommandMessage = BotRunner.getInstance().getConfig().getBotStrings()
+//                .get("message.noncommand");
+//
+//        final Message message = update.getMessage();
+//        final Chat chat = message.getChat();
 
         if (update.getMessage().hasAnimation()) {
             BotLogger.info("LISTENER_CHAT_ANIMATION", update.getMessage().getAnimation().toString());
         }
-
-        if (chat.isUserChat()) {
-            sendMessage(chat.getId(), nonCommandMessage);
-            return;
-        }
-
-        final String text = message.getText();
-
-        try {
-            if (null == text || "".equals(text)) return;
-            final String[] tmp = text.split(" ");
-            if (text.length() < 1 || text.charAt(0) != '@' || null == tmp[0]) return;
-            if (tmp.length < 2 || !BotRunner.getInstance().getConfig().getBotName().equals(tmp[0].substring(1, tmp[0].length())))
-                return;
-        } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Something bad happened while message processing", e);
-            return;
-        }
-
-        sendMessage(chat.getId(), nonCommandMessage);
+//
+//        if (chat.isUserChat()) {
+//            sendMessage(chat.getId(), nonCommandMessage);
+//            return;
+//        }
+//
+//        final String text = message.getText();
+//
+//        try {
+//            if (null == text || "".equals(text)) return;
+//            final String[] tmp = text.split(" ");
+//            if (text.length() < 1 || text.charAt(0) != '@' || null == tmp[0]) return;
+//            if (tmp.length < 2 || !BotRunner.getInstance().getConfig().getBotName().equals(tmp[0].substring(1, tmp[0].length())))
+//                return;
+//        } catch (Exception e) {
+//            LOG.log(Level.SEVERE, "Something bad happened while message processing", e);
+//            return;
+//        }
+//
+//        sendMessage(chat.getId(), nonCommandMessage);
     }
 
     @Override
